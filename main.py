@@ -12,13 +12,12 @@ casos_de_uso = UserUseCases(repositorio)
 
 class Usuario(BaseModel):
     nombre: str
-    apellido: str
     email: str
     password: str
 
 @app.post("/api/users")
 async def crear_usuario(usuario: Usuario):
-    usuario_creado = casos_de_uso.crear_usuario(usuario.nombre, usuario.apellido, usuario.email, usuario.password)
+    usuario_creado = casos_de_uso.crear_usuario(usuario.nombre, usuario.email, usuario.password)
     return {"mensaje": "Usuario creado", "usuario": usuario_creado}
 
 @app.get("/api/users")
@@ -34,7 +33,7 @@ async def obtener_usuario(user_id: str):
 
 @app.put("/api/users/{user_id}")
 async def actualizar_usuario(user_id: str, usuario: Usuario):
-    usuario_actualizado = casos_de_uso.actualizar_usuario(user_id, usuario.nombre, usuario.apellido, usuario.email, usuario.password)
+    usuario_actualizado = casos_de_uso.actualizar_usuario(user_id, usuario.nombre, usuario.email, usuario.password)
     if usuario_actualizado is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario_actualizado

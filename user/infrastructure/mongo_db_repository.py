@@ -4,7 +4,6 @@ from user.domain.user import Usuario as UsuarioDominio
 
 class Usuario(Document):
     nombre = StringField(required=True)
-    apellido = StringField(required=True)
     email = StringField(required=True)
     password = StringField(required=True)
 
@@ -13,7 +12,7 @@ class Repositorio:
         self.connection = DBConnection()
 
     def guardar(self, usuario_dominio: UsuarioDominio):
-        usuario = Usuario(nombre=usuario_dominio.nombre, apellido=usuario_dominio.apellido, email=usuario_dominio.email, password=usuario_dominio.password)
+        usuario = Usuario(nombre=usuario_dominio.nombre, email=usuario_dominio.email, password=usuario_dominio.password)
         usuario.save()
         return usuario
 
@@ -30,7 +29,7 @@ class Repositorio:
     def actualizar(self, user_id: str, usuario_dominio: UsuarioDominio):
         try:
             usuario = Usuario.objects.get(id=user_id)
-            usuario.update(nombre=usuario_dominio.nombre, apellido=usuario_dominio.apellido, email=usuario_dominio.email, password=usuario_dominio.password)
+            usuario.update(nombre=usuario_dominio.nombre, email=usuario_dominio.email, password=usuario_dominio.password)
             return usuario.reload()
         except DoesNotExist:
             return None
