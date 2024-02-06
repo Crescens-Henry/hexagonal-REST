@@ -17,7 +17,15 @@ class Usuario(BaseModel):
 @app.post("/api/users")
 async def crear_usuario(usuario: Usuario):
     usuario_creado = casos_de_uso.crear_usuario(usuario.nombre, usuario.email, usuario.password)
-    return {"mensaje": "Usuario creado", "usuario": usuario_creado}
+    casos_de_uso.enviar_email(usuario_creado.email, usuario_creado)
+    return {"mensaje": "Porfavor verifique el email para verificar", "\nusuario": usuario_creado}
+
+@app.post("/verificar/{uuid}")
+async def verificar(uuid: str):
+    if casos_de_uso.verificar_usuario(uuid):
+        return {"message": "Cuenta verificada"}
+    else:
+        return {"message": "No se encontró el usuario"}
 
 @app.get("/api/users")
 async def obtener_usuarios():
