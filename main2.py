@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import uvicorn
 
 from user.application.casos_de_uso import UserUseCases
-from user.infrastructure.mongo_db_repository import Repositorio
+from user.infrastructure.MYSQL_db_repository import Repositorio
 
 app = FastAPI()
 repositorio = Repositorio()
