@@ -1,10 +1,5 @@
 from .db_connection import DBConnection, Usuario
 from user.domain.user import Usuario as UsuarioDominio
-from .db_connection import DBConnection
-from user.domain.user import Usuario as UsuarioDominio
-
-
-
 
 class Repositorio:
     def __init__(self):

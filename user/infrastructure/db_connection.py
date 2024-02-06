@@ -12,18 +12,15 @@ class Usuario(Base):
     nombre = Column(String(50), nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     password = Column(String(120), nullable=False)
+
 class DBConnection:
     def __init__(self):
         load_dotenv()
 
-        host = os.getenv('DB.HOST_MYSQL')
-        port = os.getenv('DB.PORT_MYSQL')
-        user = os.getenv('DB.USER_MYSQL')
-        password = os.getenv('DB.PASSWORD_MYSQL')
-        database = os.getenv('DB.DATABASE_MYSQL')
+        database_path = os.getenv('DB.PATH_SQLITE')
 
         try:
-            self.engine = create_engine(f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}')
+            self.engine = create_engine(f'sqlite:///{database_path}')
             Base.metadata.create_all(self.engine)
             self.Session = sessionmaker(bind=self.engine)
             print("Conexión exitosa a la base de datos")
