@@ -20,7 +20,7 @@ class UserUseCases:
         return usuario
     
     def enviar_email(self, email, usuario):
-        remitente = "213477@ids.upchiapas.edu.mx"
+        remitente = os.getenv("REMITENTE.EMAIL")
         destinatario = email
         mensaje = f"dele click al link para confirmar su correo: http://localhost:8000/verificar/{usuario.uuid}"
         
