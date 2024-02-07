@@ -11,6 +11,7 @@ class DBConnection:
 
         try:
             connect(db='hexagonal_rest', host=host, port=int(port))
-            print("Conexión exitosa a la base de datos")
+            print("Conexión exitosa a la base de datos con MongoDB LISTA!")
         except Exception as e:
             print(f"Error al conectar a la base de datos: {str(e)}")
+

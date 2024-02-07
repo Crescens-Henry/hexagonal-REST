@@ -22,7 +22,7 @@ class UserUseCases:
     def enviar_email(self, email, usuario):
         remitente = os.getenv("REMITENTE.EMAIL")
         destinatario = email
-        mensaje = f"dele click al link para confirmar su correo: http://localhost:8000/verificar/{usuario.uuid}"
+        mensaje = f"dele click al link para confirmar su correo: http://localhost:8001/verificar/{usuario.uuid}"
         
         email = EmailMessage()
         email["From"] = remitente

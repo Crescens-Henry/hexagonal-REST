@@ -1,13 +1,19 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
-
 from user.application.casos_de_uso import UserUseCases
-from user.infrastructure.mongo_db_repository import Repositorio
+from user.infrastructure.Repository import RepositorioFactory
 
 app = FastAPI()
-repositorio = Repositorio()
+
+repositorio_factory = RepositorioFactory()
+
+# repositorio = repositorio_factory.get_repositorio("mongodb") 
+# repositorio = repositorio_factory.get_repositorio("mysql") 
+repositorio = repositorio_factory.get_repositorio("sqlite")  
+
 casos_de_uso = UserUseCases(repositorio)
+
 
 class Usuario(BaseModel):
     nombre: str
