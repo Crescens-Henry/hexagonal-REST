@@ -1,10 +1,16 @@
-from mongoengine import Document, StringField, DoesNotExist
-from .db_connection import DBConnection
-from user.domain.user import Usuario as UsuarioDominio
+from enum import unique
+from mongoengine import Document, StringField, DoesNotExist, IntField, SequenceField
+from databases.MongoDB.db_connection import DBConnection
+from user.domain.entities.user import Usuario as UsuarioDominio
+from user.infrastructure.security.utils import get_hashed_password
+
+class Contador(Document):
+    contador = IntField(default=1)
 
 class Usuario(Document):
+    id = SequenceField(primary_key=True)
     nombre = StringField(required=True)
-    email = StringField(required=True)
+    email = StringField(required=True, unique=True)
     password = StringField(required=True)
 
 class Repositorio:
@@ -12,7 +18,13 @@ class Repositorio:
         self.connection = DBConnection()
 
     def guardar(self, usuario_dominio: UsuarioDominio):
-        usuario = Usuario(nombre=usuario_dominio.nombre, email=usuario_dominio.email, password=usuario_dominio.password)
+        contador = Contador.objects.first()
+        if not contador:
+            contador = Contador().save()
+        else:
+            contador.update(inc__contador=1)
+
+        usuario = Usuario(id=contador.contador, nombre=usuario_dominio.nombre, email=usuario_dominio.email, password=usuario_dominio.password)
         usuario.save()
         return usuario
 
@@ -29,7 +41,7 @@ class Repositorio:
     def actualizar(self, user_id: str, usuario_dominio: UsuarioDominio):
         try:
             usuario = Usuario.objects.get(id=user_id)
-            usuario.update(nombre=usuario_dominio.nombre, email=usuario_dominio.email, password=usuario_dominio.password)
+            usuario.update(nombre=usuario_dominio.nombre,  password=get_hashed_password(usuario_dominio.password))
             return usuario.reload()
         except DoesNotExist:
             return None

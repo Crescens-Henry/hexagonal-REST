@@ -1,5 +1,7 @@
-from .db_connection import DBConnection, Usuario
-from user.domain.user import Usuario as UsuarioDominio
+from databases.MYSQL.db_connection import DBConnection, Usuario
+from user.domain.entities.user import Usuario as UsuarioDominio
+from databases.MYSQL.db_connection import DBConnection
+from user.domain.entities.user import Usuario as UsuarioDominio
 
 class Repositorio:
     def __init__(self):
@@ -36,7 +38,7 @@ class Repositorio:
             self.session.commit()
             return True
         return False
-    
+
     def obtener_por_email(self, email):
         usuario = self.session.query(Usuario).filter_by(email=email).first()
         return usuario
