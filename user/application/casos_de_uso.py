@@ -1,4 +1,7 @@
 import re
+
+from arrow import get
+from user.application.JWT.utils import get_hashed_password, verify_password
 from user.domain.user import Usuario
 from email.message import EmailMessage
 import smtplib
@@ -39,6 +42,7 @@ class UserUseCases:
         usuario = self.usuarios_temporales.pop(uuid, None)
         if usuario is not None:
             usuario.verificado = True
+            usuario.password = get_hashed_password(usuario.password)
             self.repositorio.guardar(usuario)
             return True
         return False
@@ -56,4 +60,13 @@ class UserUseCases:
     def eliminar_usuario(self, user_id: str):
         return self.repositorio.eliminar(user_id)
     
-    
+    def autenticar_usuario(self, email: str, password: str):
+        usuario = self.repositorio.obtener_por_email(email)
+        if usuario is not None:
+            if isinstance(usuario, dict):
+                password_valida = verify_password(password, usuario['password'])
+            else:
+                password_valida = verify_password(password, usuario.password)
+            if password_valida:
+                return usuario
+        return None

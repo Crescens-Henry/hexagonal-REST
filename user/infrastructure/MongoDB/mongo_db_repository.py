@@ -41,3 +41,10 @@ class Repositorio:
             return True
         except DoesNotExist:
             return False
+    
+    def obtener_por_email(self, email):
+        try:
+            usuario = Usuario.objects.get(email=email)
+            return {**usuario.to_mongo().to_dict(), "_id": str(usuario.id)}
+        except DoesNotExist:
+            return None

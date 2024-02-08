@@ -8,13 +8,15 @@ app = FastAPI()
 
 repositorio_factory = RepositorioFactory()
 
-# repositorio = repositorio_factory.get_repositorio("mongodb") 
+repositorio = repositorio_factory.get_repositorio("mongodb") 
 # repositorio = repositorio_factory.get_repositorio("mysql") 
-repositorio = repositorio_factory.get_repositorio("sqlite")  
+# repositorio = repositorio_factory.get_repositorio("sqlite")  
 
 casos_de_uso = UserUseCases(repositorio)
 
-
+class Login(BaseModel):
+    email: str
+    password: str
 class Usuario(BaseModel):
     nombre: str
     email: str
@@ -56,6 +58,13 @@ async def eliminar_usuario(user_id: str):
     if not casos_de_uso.eliminar_usuario(user_id):
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return {"mensaje": "Usuario eliminado"}
+
+@app.post("/api/login")
+async def login(login: Login):
+    usuario = casos_de_uso.autenticar_usuario(login.email, login.password)
+    if usuario is None:
+        raise HTTPException(status_code=400, detail="Email o contraseña incorrectos")
+    return {"mensaje": "Login exitoso", "usuario": usuario}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)

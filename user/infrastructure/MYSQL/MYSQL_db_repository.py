@@ -38,3 +38,7 @@ class Repositorio:
             self.session.commit()
             return True
         return False
+
+    def obtener_por_email(self, email):
+        usuario = self.session.query(Usuario).filter_by(email=email).first()
+        return usuario
