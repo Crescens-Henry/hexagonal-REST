@@ -1,5 +1,5 @@
-from enum import unique
-from mongoengine import Document, StringField, DoesNotExist, IntField, SequenceField
+from datetime import datetime
+from mongoengine import Document, StringField, DoesNotExist, IntField, SequenceField, BooleanField, DateTimeField
 from databases.MongoDB.db_connection import DBConnection
 from user.domain.entities.user import Usuario as UsuarioDominio
 from user.infrastructure.security.utils import get_hashed_password
@@ -9,9 +9,14 @@ class Contador(Document):
 
 class Usuario(Document):
     id = SequenceField(primary_key=True)
-    nombre = StringField(required=True)
+    name = StringField(required=True)
+    last_name = StringField(required=True)
+    cellphone = StringField(required=True, unique=True)
     email = StringField(required=True, unique=True)
     password = StringField(required=True)
+    verified_at = DateTimeField()
+    uuid = StringField(request=True, unique=True)
+    verificado = BooleanField(default=False)
 
 class Repositorio:
     def __init__(self):
@@ -24,7 +29,7 @@ class Repositorio:
         else:
             contador.update(inc__contador=1)
 
-        usuario = Usuario(id=contador.contador, nombre=usuario_dominio.nombre, email=usuario_dominio.email, password=usuario_dominio.password)
+        usuario = Usuario(id=contador.contador, name=usuario_dominio.name,last_name= usuario_dominio.last_name,cellphone =str( usuario_dominio.cellphone), email=usuario_dominio.email, password=usuario_dominio.password, verified_at=usuario_dominio.verified_at, uuid=usuario_dominio.uuid, verificado=usuario_dominio.verificado)
         usuario.save()
         return usuario
 
@@ -41,7 +46,13 @@ class Repositorio:
     def actualizar(self, user_id: str, usuario_dominio: UsuarioDominio):
         try:
             usuario = Usuario.objects.get(id=user_id)
-            usuario.update(nombre=usuario_dominio.nombre,  password=get_hashed_password(usuario_dominio.password))
+            usuario.update(
+                name=str(usuario_dominio.name),
+                last_name=str(usuario_dominio.last_name),
+                cellphone=str(usuario_dominio.cellphone),
+                email=str(usuario_dominio.email),
+                password=str(usuario_dominio.password)
+            )
             return usuario.reload()
         except DoesNotExist:
             return None
@@ -58,5 +69,20 @@ class Repositorio:
         try:
             usuario = Usuario.objects.get(email=email)
             return {**usuario.to_mongo().to_dict(), "_id": str(usuario.id)}
+        except DoesNotExist:
+            return None
+        
+    def obtener_por_uuid(self, uuid):
+        try:
+            usuario = Usuario.objects.get(uuid=uuid)
+            return {**usuario.to_mongo().to_dict(), "_id": str(usuario.id)}
+        except DoesNotExist:
+            return None
+        
+    def verificar_usuario(self, uuid):
+        try:
+            usuario = Usuario.objects.get(uuid=uuid)
+            usuario.update(verificado=True, verified_at=datetime.now().isoformat())
+            return usuario.reload()
         except DoesNotExist:
             return None

@@ -1,24 +1,23 @@
 import os
 from dotenv import load_dotenv
-from user.application.utils.singleton import Singleton
 from user.domain.entities.user import Usuario
 from email.message import EmailMessage
 import smtplib
+from user.infrastructure.security.utils import get_hashed_password
 
 
 class CreateUserUseCase:
     def __init__(self, repositorio):
-        self.singleton = Singleton.getInstance()
         self.repositorio = repositorio
         load_dotenv()
         
 
-    def crear_usuario(self, nombre: str, email: str, password: str):
+    def crear_usuario(self, nombre: str,last_name:str, cellphone:int, email: str, password: str):
         usuario_existente = self.repositorio.obtener_por_email(email)
         if usuario_existente is not None:
             return {"error": "El correo electrónico ya está en uso."}
-        usuario = Usuario(nombre, email, password)
-        self.singleton.usuarios_temporales[usuario.uuid] = usuario
+        usuario = Usuario(nombre,last_name, cellphone, email, get_hashed_password(password)) 
+        self.repositorio.guardar(usuario)
         self.enviar_email(email, usuario)
         return usuario
     

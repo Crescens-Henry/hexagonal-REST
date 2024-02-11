@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import os
@@ -9,9 +9,15 @@ class Usuario(Base):
     __tablename__ = 'usuarios'
 
     id = Column(Integer, primary_key=True)
-    nombre = Column(String(50), nullable=False)
+    name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    cellphone = Column(String(20), nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     password = Column(String(120), nullable=False)
+    verified_at = Column(String(50))
+    uuid = Column(String(36), unique=True)
+    verificado = Column(Boolean, default=False)
+    
 class DBConnection:
     def __init__(self):
         load_dotenv()

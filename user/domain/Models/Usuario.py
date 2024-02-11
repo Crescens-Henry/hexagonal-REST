@@ -1,7 +1,11 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class Usuario(BaseModel):
-    nombre: str
+    name: str
+    last_name: str
+    cellphone: int
     email: str
     password: str
+    verified_at: Optional[str] = None

@@ -9,5 +9,5 @@ def initialize_endpoints(repositorio):
 
     @crear_usuario_router.post("/")
     async def crear_usuario(usuario: Usuario):
-        usuario_creado = createUserUsercase.crear_usuario(usuario.nombre, usuario.email, usuario.password)
-        return {"mensaje": "Porfavor verifique el email para verificar", "\nusuario": usuario_creado}
+        usuario_creado = createUserUsercase.crear_usuario(usuario.name,usuario.last_name, usuario.cellphone,usuario.email, usuario.password)
+        return {"mensaje": "Porfavor verifique el email para activar cuenta", "\nusuario": usuario_creado}

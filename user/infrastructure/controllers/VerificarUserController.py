@@ -7,7 +7,7 @@ def initialize_endpoints(repositorio):
     verificationUserUseCase = VerificationUserUseCase(repositorio)
 
 
-    @verificar_usuario_router.post("/")
+    @verificar_usuario_router.put("/")
     async def verificar(uuid: str):
             if verificationUserUseCase.verificar_usuario(uuid):
                 return {"message": "Cuenta verificada"}
