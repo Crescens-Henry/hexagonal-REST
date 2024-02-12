@@ -1,3 +1,4 @@
+from sqlalchemy import DateTime
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -11,12 +12,13 @@ class Usuario(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
-    cellphone = Column(String(20), nullable=False)
+    cellphone = Column(String(20), nullable=False, unique=True)
     email = Column(String(120), unique=True, nullable=False)
     password = Column(String(120), nullable=False)
-    verified_at = Column(String(50))
-    uuid = Column(String(36), unique=True)
-    verificado = Column(Boolean, default=False)
+    token_uuid = Column(String(36), unique=True)
+    verified = Column(Boolean, default=False)
+    verified_at = Column(DateTime)
+    
     
 class DBConnection:
     def __init__(self):

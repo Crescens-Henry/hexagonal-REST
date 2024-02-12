@@ -1,8 +1,9 @@
 from datetime import datetime
 from databases.MYSQL.db_connection import DBConnection, Usuario
-from user.domain.entities.user import Usuario as UsuarioDominio
+from user.domain.Entity.Contact import Contact
+from user.domain.Entity.Credential import Credential
+from user.domain.Entity.user import User as UsuarioDominio
 from databases.MYSQL.db_connection import DBConnection
-from user.infrastructure.security.utils import get_hashed_password
 
 class Repositorio:
     def __init__(self):
@@ -10,7 +11,15 @@ class Repositorio:
         self.session = self.connection.Session()
 
     def guardar(self, usuario_dominio: UsuarioDominio):
-        usuario = Usuario( name=usuario_dominio.name,last_name= usuario_dominio.last_name,cellphone =str( usuario_dominio.cellphone), email=usuario_dominio.email, password=usuario_dominio.password, verified_at=usuario_dominio.verified_at, uuid=usuario_dominio.uuid, verificado=usuario_dominio.verificado)
+        usuario = Usuario(
+            name=usuario_dominio.contact.name,
+            last_name=usuario_dominio.contact.last_name,
+            cellphone=str(usuario_dominio.contact.cellphone),
+            email=usuario_dominio.credentials.email,
+            password=usuario_dominio.credentials.password,
+            token_uuid=usuario_dominio.status.token_uuid,
+            verified=usuario_dominio.status.verified,
+        )
         self.session.add(usuario)
         self.session.commit()
         return usuario
@@ -22,14 +31,14 @@ class Repositorio:
         usuario = self.session.query(Usuario).get(user_id)
         return usuario
 
-    def actualizar(self, user_id: str, usuario_dominio: UsuarioDominio):
+    def actualizar(self, user_id: str, contact: Contact, credentials: Credential):
         usuario = self.session.query(Usuario).get(user_id)
         if usuario:
-            usuario.name = usuario_dominio.name
-            usuario.last_name = usuario_dominio.last_name
-            usuario.cellphone = str(usuario_dominio.cellphone)
-            usuario.email = usuario_dominio.email
-            usuario.password = get_hashed_password(usuario_dominio.password)
+            usuario.name = contact.name
+            usuario.last_name = contact.last_name
+            usuario.cellphone = str(contact.cellphone)
+            usuario.email = credentials.email
+            usuario.password = credentials.password
             self.session.commit()
             self.session.refresh(usuario)
         return usuario
@@ -46,17 +55,16 @@ class Repositorio:
         usuario = self.session.query(Usuario).filter_by(email=email).first()
         return usuario
     
-    def obtener_por_uuid(self, uuid):
-        usuario = self.session.query(Usuario).filter_by(uuid=uuid).first()
+    def obtener_por_uuid(self, token_uuid):
+        usuario = self.session.query(Usuario).filter_by(token_uuid=token_uuid).first()
         return usuario
-    
-    def verificar_usuario(self, uuid):
+
+    def verificar_usuario(self, token_uuid):
         try:
-            usuario = self.session.query(Usuario).filter_by(uuid=uuid).one()
-            self.session.query(Usuario).filter_by(id=usuario.id).update({Usuario.verificado: True,  Usuario.verified_at: datetime.now().isoformat()})
+            usuario = self.session.query(Usuario).filter_by(token_uuid=token_uuid).one()
+            self.session.query(Usuario).filter_by(id=usuario.id).update({Usuario.verified: True,  Usuario.verified_at: datetime.now()})
             self.session.commit()
             return usuario
         except:
             print ("Error")
             return None
-    

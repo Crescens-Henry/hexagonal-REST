@@ -6,7 +6,6 @@ from user.infrastructure.Factory.Repository import RepositorioFactory
 
 repositorio_factory = RepositorioFactory()
 
-# repositorio = repositorio_factory.get_repositorio("mongodb") 
 # repositorio = repositorio_factory.get_repositorio("mysql") 
 repositorio = repositorio_factory.get_repositorio("sqlite")  
 

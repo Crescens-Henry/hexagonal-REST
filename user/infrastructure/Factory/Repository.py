@@ -1,11 +1,9 @@
-from user.infrastructure.repositories.mongo_db_repository import Repositorio as MongoRepositorio
 from user.infrastructure.repositories.MYSQL_db_repository import Repositorio as MySQLRepositorio
 from user.infrastructure.repositories.SQLite_db_repository import Repositorio as SQLiteRepositorio
 
 class RepositorioFactory:
     def __init__(self):
         self.repositorios = {
-            "mongodb": MongoRepositorio(),
             "mysql": MySQLRepositorio(),
             "sqlite": SQLiteRepositorio()
         }

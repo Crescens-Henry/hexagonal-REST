@@ -12,4 +12,4 @@ def initialize_endpoints(repositorio):
         usuario = authenticationUserUseCase.autenticar_usuario(login.email, login.password)
         if usuario is None:
             raise HTTPException(status_code=400, detail="Email o contraseña incorrectos")
-        return {"mensaje": "Login exitoso", "usuario": usuario}
+        return {"usuario": usuario}
