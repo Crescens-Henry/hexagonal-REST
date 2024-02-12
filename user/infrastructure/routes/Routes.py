@@ -7,6 +7,7 @@ from user.infrastructure.controllers.UserByIdController import get_user_by_id_ro
 from user.infrastructure.controllers.PutUserController import update_user_router, initialize_endpoints as initialize_update_user
 from user.infrastructure.controllers.DeleteUserController import delete_user_router, initialize_endpoints as initialize_delete_user
 from user.infrastructure.middleware.auth import get_current_user
+from user.infrastructure.controllers.LogoutController import logout_router, initialize_endpoints as initialize_logout
 
 
 router = APIRouter()
@@ -19,6 +20,8 @@ def initialize_routes(repositorio):
     initialize_get_user_by_id(repositorio)
     initialize_update_user(repositorio)
     initialize_delete_user(repositorio)
+    initialize_logout(repositorio)
+    
     router.include_router(crear_usuario_router, prefix="/api/v1/users", tags=["usuarios"])
     router.include_router(verificar_usuario_router, prefix="/api/v1/users/{uuid}/activate", tags=["usuarios"])
     router.include_router(login_router, prefix="/api/v1/login", tags=["usuarios"])
@@ -26,3 +29,4 @@ def initialize_routes(repositorio):
     router.include_router(get_user_by_id_router, prefix="/api/v1/users/{user_id}", tags=["usuarios"], dependencies=[Depends(get_current_user)])
     router.include_router(update_user_router, prefix="/api/v1/users/{user_id}", tags=["usuarios"], dependencies=[Depends(get_current_user)])
     router.include_router(delete_user_router, prefix="/api/v1/users/{user_id}", tags=["usuarios"], dependencies=[Depends(get_current_user)])
+    router.include_router(logout_router, prefix="/api/v1/logout", tags=["usuarios"], dependencies=[Depends(get_current_user)])
